@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using todoapp.DTO.User;
 using todoapp.Models;
 using todoapp.Services;
 
@@ -30,4 +31,13 @@ public class UserController : ControllerBase
 
         return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
     }
+    
+    [HttpPost("Login")]
+    public async Task<string> Login(LoginInputDTO loginInput)
+    {
+
+        return await _userService.Login(loginInput);
+
+    }
+
 }
