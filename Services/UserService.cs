@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using todoapp.Config;
 using todoapp.DTO.User;
 using todoapp.Models;
+using todoapp.Models.Courses;
 
 namespace todoapp.Services;
 
@@ -19,7 +20,9 @@ public interface IUserService
     public Task<List<User>> GetAsync();
     public Task<User?> GetAsync(string id);
 
-    public Task<User?> GetByEmailAsync(string email);
+    public Task<User> GetByEmailAsync(string email);
+
+    public Task UpdateAsync(string id, User updatedUser);
 }
 
 
@@ -67,7 +70,6 @@ public class UserService : IUserService
     {
         
         newUser.Password = HashPassword(newUser.Password);
-
         await _usersCollection.InsertOneAsync(newUser);
     }
 

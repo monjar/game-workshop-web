@@ -20,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
     // configure strongly typed settings object
     services.Configure<JWTSettings>(builder.Configuration.GetSection("JWTSettings"));
     services.AddScoped<IUserService, UserService>();
+    services.AddScoped<ICourseService, CourseService>();
+
 
 }
 

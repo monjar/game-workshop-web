@@ -9,7 +9,6 @@ namespace todoapp.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Middlewares.Auth.Authorize]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -27,7 +26,7 @@ public class UserController : ControllerBase
 
     }
     
-    
+
     [HttpPost]
     public async Task<IActionResult> Post(User newUser)
     {
@@ -36,7 +35,6 @@ public class UserController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
     }
     
-    [AllowAnonymous]
     [HttpPost("Login")]
     public async Task<string> Login(LoginInputDTO loginInput)
     {

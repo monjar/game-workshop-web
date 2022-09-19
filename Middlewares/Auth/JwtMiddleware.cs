@@ -48,7 +48,7 @@ public class JwtMiddleware
 
             var jwtToken = (JwtSecurityToken)validatedToken;
             var userEmail = jwtToken.Claims.First(x => x.Type == "email").Value;
-
+            
             // attach user to context on successful jwt validation
             context.Items["User"] = await userService.GetByEmailAsync(userEmail);
         }
