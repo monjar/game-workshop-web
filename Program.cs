@@ -1,33 +1,48 @@
+using todoapp.Config;
+using todoapp.Middlewares.Auth;
 using todoapp.Models;
 using todoapp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// add services to DI container
+{
+    var services = builder.Services;
+    services.AddCors();
+    services.AddControllers();
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
+    services.AddAuthorization();
+    services.Configure<WorkshopDatabaseSettings>(
+        builder.Configuration.GetSection("WorkshopDatabase"));
 
-builder.Services.Configure<WorkshopDatabaseSettings>(
-    builder.Configuration.GetSection("WorkshopDatabase"));
+    // configure strongly typed settings object
+    services.Configure<JWTSettings>(builder.Configuration.GetSection("JWTSettings"));
+    services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddSingleton<UserService>();
+}
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// configure HTTP request pipeline
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+    // global cors policy
+    app.UseCors(x => x
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+    
+    // custom jwt auth middleware
+    app.UseMiddleware<JwtMiddleware>();
+
+    app.MapControllers();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
 
 app.Run();

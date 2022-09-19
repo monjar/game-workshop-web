@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using todoapp.DTO.User;
 using todoapp.Models;
@@ -5,15 +6,18 @@ using todoapp.Services;
 
 namespace todoapp.Controllers;
 
+
 [ApiController]
 [Route("api/[controller]")]
+[Middlewares.Auth.Authorize]
 public class UserController : ControllerBase
 {
-    private readonly UserService _userService;
+    private readonly IUserService _userService;
 
-    public UserController
-        (UserService userService) =>
+    public UserController(IUserService userService)
+    {
         _userService = userService;
+    }
 
     [HttpGet]
     public async Task<List<User>> Get()
@@ -32,6 +36,7 @@ public class UserController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
     }
     
+    [AllowAnonymous]
     [HttpPost("Login")]
     public async Task<string> Login(LoginInputDTO loginInput)
     {
